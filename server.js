@@ -1,21 +1,36 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+import cors from "cors";
+
+// Load environment variables from .env
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
+// __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ✅ Serve ALL files inside /public
+// Enable CORS if needed
+app.use(cors());
+
+// Serve static files from public folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ Default route
+// Route for home page
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-const PORT = process.env.PORT || 3000;
+// Optional: 404 handler
+app.use((req, res) => {
+  res.status(404).send("Page not found");
+});
+
+// Start server
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+  console.log(`Server is running on port ${PORT}`);
 });
